@@ -11,6 +11,7 @@ const SimpleRegistryComponent = () => {
   const [newName, setNewName] = useState("");
   const [newAge, setNewAge] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [walletAddress, setWalletAddress] = useState(null);
 
   const CONTRACT_ADDRESS = "0xb451ACC4003667d2A25A81a264D98a39484Ba6b5";
 
@@ -24,6 +25,17 @@ const SimpleRegistryComponent = () => {
     );
     setContract(contract);
   };
+
+  async function connectWallets() {
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setWalletAddress(accounts[0]);
+    } catch (error) {
+      console.error("Error connecting wallet:", error.message || error);
+    }
+  }
 
   const updateName = async () => {
     try {
@@ -84,6 +96,12 @@ const SimpleRegistryComponent = () => {
 
   return (
     <div className="App-header">
+      <div>
+        <button className="connect" onClick={connectWallets}>
+          {walletAddress ? `Connected: ${walletAddress}` : "Connect Wallet"}
+        </button>
+      </div>
+
       <h1>SimpleRegistry</h1>
       {contract ? (
         <>
